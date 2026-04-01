@@ -1,0 +1,30 @@
+services:
+  frontend:
+    image: frontend:v1
+    environment:
+      REPLICA_NAME: "{{.Service.Name}}.{{.Task.Slot}}"
+        #    ports:
+        #      - "8080:8080"
+    networks:
+      - bank-net
+    healthcheck:
+      #test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    deploy:
+      mode: replicated
+      replicas: 10
+      placement:
+        max_replicas_per_node: 10
+        constraints:
+          - "node.labels.front=true"
+      #endpoint_mode: dnsrr
+      restart_policy:
+        condition: any
+
+networks:
+  bank-net:
+    driver: overlay
+
