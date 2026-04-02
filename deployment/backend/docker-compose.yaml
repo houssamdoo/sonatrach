@@ -1,6 +1,6 @@
 services:
   backend:
-    image: backend:v1
+    image: registry.sonatrach.dz/my/backend:v1.0
     environment:
       DATABASE_URL: postgres://user:password@bdd:5432/globalbank
       REPLICA_NAME: "{{.Service.Name}}.{{.Task.Slot}}"
@@ -16,7 +16,7 @@ services:
       retries: 3
       start_period: 10s
     deploy:
-      replicas: 10
+      replicas: 3
       restart_policy:
         condition: on-failure
 networks:

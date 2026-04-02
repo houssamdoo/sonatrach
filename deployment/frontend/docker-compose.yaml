@@ -1,6 +1,7 @@
 services:
   frontend:
-    image: frontend:v1
+    # image: registry.sonatrach.dz/my/front:v1.0
+    image: registry.sonatrach.dz/my/front:v2.0
     environment:
       REPLICA_NAME: "{{.Service.Name}}.{{.Task.Slot}}"
         #    ports:
@@ -15,11 +16,16 @@ services:
       retries: 3
     deploy:
       mode: replicated
-      replicas: 10
+      replicas: 3
       placement:
         max_replicas_per_node: 10
         constraints:
-          - "node.labels.front=true"
+          - "node.labels.front==true"
+      update_config:
+        parallelism: 1
+        delay: 15s
+        order: start-first
+        failure_action: rollback
       #endpoint_mode: dnsrr
       restart_policy:
         condition: any

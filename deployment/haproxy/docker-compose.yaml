@@ -1,0 +1,31 @@
+services:
+  haproxy:
+    image: haproxy:2.8-alpine
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+    networks:
+      - bank-net
+    deploy:
+      mode:
+        global
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: any
+    configs:
+      - source: config-apigateway
+        target: /usr/local/etc/haproxy/haproxy.cfg
+        uid: "0"
+        gid: "0"
+        mode: 0644
+        
+networks:
+  bank-net:
+    driver: overlay
+
+configs:
+  config-apigateway:
+    file: ./configs/haproxy.cfg
